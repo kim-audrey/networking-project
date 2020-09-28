@@ -29,6 +29,8 @@ public class ChatClient {
         Thread t = new Thread(listener);
         t.start();
 
+
+        //WHAT WE NEEDTACHANGE FOR SUBMIT 
         System.out.print("Chat sessions has started - enter a user name: ");
         String name = userInput.nextLine().trim();
         out.println(name); //out.flush();
