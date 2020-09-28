@@ -54,6 +54,8 @@ public class ChatServer {
     }
 
     // Inner class 
+    /* 
+
     static class ClientHandler implements Runnable {
         // Maintain data about the client serviced by this thread
         ClientConnectionData client;
@@ -62,9 +64,9 @@ public class ChatServer {
             this.client = client;
         }
 
-        /**
-		 * Broadcasts a message to all clients connected to the server.
-		 */
+        
+		// Broadcasts a message to all clients connected to the server.
+		
         public void broadcast(String msg) {
             try {
                 System.out.println("Broadcasting -- " + msg);
@@ -128,5 +130,6 @@ public class ChatServer {
         }
         
     }
+    */
 
 }

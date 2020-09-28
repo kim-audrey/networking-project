@@ -46,7 +46,7 @@ public class ChatClient {
         socket.close();
         
     }
-
+    /*
     static class ServerListener implements Runnable {
 
         @Override
@@ -68,4 +68,5 @@ public class ChatClient {
             }
         }
     }
+    */
 }
