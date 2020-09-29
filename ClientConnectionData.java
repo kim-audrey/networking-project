@@ -6,7 +6,7 @@ public class ClientConnectionData {
     private Socket socket;
     private BufferedReader input;
     private PrintWriter out;
-    private String name;
+    private String name;        // like localhost, ip address etc...
     private String userName;
 
     public ClientConnectionData(Socket socket, BufferedReader input, PrintWriter out, String name) {

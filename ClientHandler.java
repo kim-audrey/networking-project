@@ -1,9 +1,20 @@
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+
+
 public  class ClientHandler implements Runnable {
     // Maintain data about the client serviced by this thread
     ClientConnectionData client;
+    private static final ArrayList<ClientConnectionData> clientList=new ArrayList<>();
+    
 
     public ClientHandler(ClientConnectionData client) {
         this.client = client;
+
     }
 
     /**
@@ -39,6 +50,7 @@ public  class ClientHandler implements Runnable {
             String incoming = "";
 
             while( (incoming = in.readLine()) != null) {
+                //this is where fancy ui changes 
                 if (incoming.startsWith("CHAT")) {
                     String chat = incoming.substring(4).trim();
                     if (chat.length() > 0) {
@@ -49,6 +61,9 @@ public  class ClientHandler implements Runnable {
                     break;
                 }
             }
+
+
+
         } catch (Exception ex) {
             if (ex instanceof SocketException) {
                 System.out.println("Caught socket ex for " + 
