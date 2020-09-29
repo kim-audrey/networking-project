@@ -1,4 +1,4 @@
-static class ServerListener implements Runnable {
+public class ServerListener implements Runnable {
 
     @Override
     public void run() {

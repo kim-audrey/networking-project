@@ -1,4 +1,4 @@
-static class ClientHandler implements Runnable {
+public  class ClientHandler implements Runnable {
     // Maintain data about the client serviced by this thread
     ClientConnectionData client;
 
