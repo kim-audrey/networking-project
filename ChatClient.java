@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class ChatClient {
     private static Socket socket;
-    private static BufferedReader socketIn;
+    static BufferedReader socketIn;
     private static PrintWriter out;
     
     public static void main(String[] args) throws Exception {
@@ -45,8 +45,8 @@ public class ChatClient {
         socketIn.close();
         socket.close();
         
-    }
-    /*
+
+/*
     static class ServerListener implements Runnable {
 
         @Override
@@ -69,4 +69,9 @@ public class ChatClient {
         }
     }
     */
+
+
+
+    }
+    
 }

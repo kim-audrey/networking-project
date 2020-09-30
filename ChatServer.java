@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 
 public class ChatServer {
     public static final int PORT = 54321;
-    private static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
+    static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(100);
@@ -51,6 +51,7 @@ public class ChatServer {
     }
 
     // Inner class 
+// Inner class 
     /* 
 
     static class ClientHandler implements Runnable {
@@ -128,5 +129,6 @@ public class ChatServer {
         
     }
     */
+    
 
 }
