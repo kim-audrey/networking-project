@@ -10,8 +10,13 @@ public class ServerListener implements Runnable {
             while( (incoming = ChatClient.socketIn.readLine()) != null) {
                 //handle different headers
                 //WELCOME
+                if(incoming.startsWith("WELCOME")){}
                 //CHAT
+                if(incoming.startsWith("CHAT")){}
                 //EXIT
+                if(incoming.startsWith("EXIT")){}
+                //BLOCK
+                if(incoming.startsWith("BLOCK")){}
                 System.out.println(incoming);
             }
         } catch (Exception ex) {
