@@ -2,6 +2,7 @@ import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.BufferedReader;
@@ -11,7 +12,7 @@ import java.io.PrintWriter;
 
 public class ChatServer {
     public static final int PORT = 54321;
-    static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
+    static final HashMap<String, ClientConnectionData> clientList = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(100);

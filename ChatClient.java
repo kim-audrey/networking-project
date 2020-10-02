@@ -29,9 +29,16 @@ public class ChatClient {
 
 
         //WHAT WE NEEDTACHANGE FOR SUBMITNAME 
-        System.out.print("Chat sessions has started - enter a user name: ");
-        String name = userInput.nextLine().trim();
-        out.println(name); //out.flush();
+        System.out.print("Chat sessions have started");
+        final int usernameIndex = 5;
+        String username;
+
+        do{
+            System.out.println("SUBMITNAME: ");
+            username = userInput.nextLine().trim();
+        } while (!username.startsWith("NAME") && !clientList.containsKey(username.substring(usernameIndex)));
+        
+        out.println(username); //out.flush();
 
         String line = userInput.nextLine().trim();
         while(!line.toLowerCase().startsWith("/quit")) {
