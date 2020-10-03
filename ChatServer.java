@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 
 public class ChatServer {
     public static final int PORT = 54321;
-    static final HashMap<String, ClientConnectionData> clientList = new HashMap<>();
+    public static final HashMap<String, ClientConnectionData> clientList = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(100);
