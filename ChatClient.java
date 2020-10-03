@@ -36,7 +36,7 @@ public class ChatClient {
         do{
             System.out.println("SUBMITNAME: ");
             username = userInput.nextLine().trim();
-        } while (!username.startsWith("NAME") && !clientList.containsKey(username.substring(usernameIndex)));
+        } while (!username.startsWith("NAME") && ! (clientList.containsKey(username.substring(usernameIndex))));
         
         out.println(username); //out.flush();
 

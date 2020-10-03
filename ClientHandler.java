@@ -16,6 +16,7 @@ class ClientHandler implements Runnable {
 	
     public void broadcast(String msg) {
         try {
+           
             System.out.println("Broadcasting -- " + msg);
             synchronized (ChatServer.clientList) {
                 for (ClientConnectionData c : ChatServer.clientList){
