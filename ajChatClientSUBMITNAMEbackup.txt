@@ -1,26 +1,23 @@
-do{
-            System.out.println(nameExists);
-            System.out.println("\nSUBMITNAME: ");        // wait, is the user interface system.out?
-            
+
+
+                //WHAT WE NEEDTACHANGE FOR SUBMITNAME 
+        System.out.print("Chat sessions have started");
+        final int usernameIndex = 5;
+        String nameInput;
+        String username;
+        boolean nameExists = false;
+        do{
+            System.out.println("SUBMITNAME: ");        // wait, is the user interface system.out?
             nameInput = userInput.nextLine().trim();
-            input = nameInput.strip().split("[\\s+]");
-
-            if (input[0].equals("NAME") && input.length > 1) {
-                username = nameInput.substring(usernameIndex);
-                System.out.println(username);
-            } else {
-                continue;
-            }
-
-            System.out.println(ChatServer.clientList.size());
+            username = nameInput.substring(usernameIndex);
             
-            // check if name is already in use
-            for (ClientConnectionData client : ChatServer.clientList){
-                System.out.println("existing name: " + client.getName());
-                if (client.getName().equals(username)){
-                    nameExists = true;
-                    break;
-                }
-            }
-
-        } while (nameExists);
+            // check if name is already in use -- MOVED TO FUNCTION IN CHAT SERVER
+            // System.out.println("\t\tChatServer.clientList size : " + ChatServer.clientList.size());
+            // for (ClientConnectionData client : ChatServer.clientList){
+            //     System.out.println("existing name: " + client.getName());
+            //     if (client.getName().equals(username)){
+            //         nameExists = true;
+            //         break;
+            //     }
+            // }
+        } while (!nameInput.startsWith("NAME") || nameExists);    // can someone check me doing ChatServer.clientlist?

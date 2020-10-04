@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.SocketException;
 
 
@@ -34,8 +35,40 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             BufferedReader in = client.getInput();
+            PrintWriter out = client.getOut();
+            out.println("Chat sessions have started");
+            out.println(ChatServer.clientList);
+
             //get userName, first message from user
-            String username = in.readLine().trim();
+            
+            String nameInput;
+            String username = "";
+            String[] input;
+            boolean usernameExists = false;
+
+            do{
+                out.println("SUBMITNAME");
+                nameInput = in.readLine().trim();
+                input = nameInput.strip().split("[\\s+]");
+
+                if (input[0].equals("NAME") && input.length > 1) {
+                    username = input[1];
+
+                    out.println("\t\tchecking for username:");
+                    usernameExists = false; 
+                    for (ClientConnectionData client : ChatServer.clientList){
+                        System.out.println("\t\t\ta name: " + client.getUsername());
+                        if (client.getUsername().equals(username))
+                            usernameExists = true;
+                    }
+                }
+                else 
+                    continue;
+                    
+            } while (usernameExists);
+
+
+
             client.setUsername(username);
             //notify all that client has joined
             broadcast(String.format("WELCOME %s", client.getUsername()));
@@ -60,13 +93,11 @@ class ClientHandler implements Runnable {
                             break;
                         }
                     }
-
                     if(recipient.equals(client)) {    
                         client.getOut().printf("Sorry... %s does not exist, it was all a dream", recipientName);       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
                     } else {
                         recipient.getOut().printf("PCHAT %s: %s", client.getName(), incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
-
                 } else if (incoming.startsWith("QUIT")){
                     break;
                 }

@@ -29,30 +29,27 @@ public class ChatClient {
 
 
         //WHAT WE NEEDTACHANGE FOR SUBMITNAME 
-        System.out.print("Chat sessions have started");
-        final int usernameIndex = 5;
-        String nameInput;
-        String username;
-        boolean nameExists = false;
-        do{
-            System.out.println("SUBMITNAME: ");        // wait, is the user interface system.out?
-            nameInput = userInput.nextLine().trim();
-            username = nameInput.substring(usernameIndex);
-            
-            // check if name is already in use
-            for (ClientConnectionData client : ChatServer.clientList){
-                System.out.println("existing name: " + client.getName());
-                if (client.getName().equals(username)){
-                    nameExists = true;
-                    break;
-                }
-            }
-        } while (!nameInput.startsWith("NAME") || nameExists);    // can someone check me doing ChatServer.clientlist?
-        
+        // System.out.println("Chat sessions have started");
+        // final int usernameIndex = 5;
+        // String nameInput;
+        // String username = "";
+        // String[] input;
+
+        // do{
+        //     System.out.println("SUBMITNAME");
+        //     nameInput = userInput.nextLine().trim();
+        //     input = nameInput.strip().split("[\\s+]");
+
+        //     if (input[0].equals("NAME") && input.length > 1) 
+        //         username = nameInput.substring(usernameIndex);
+        //     else 
+        //         continue;
+
+        // } while (ChatServer.usernameExists(username));
 
         // he go to ClientHandler because 
             // out = new PrintWriter(socket.getOutputStream(), true); 
-        out.println(username); //out.flush();
+        // out.println(username); //out.flush();
 
         // wait what i this for: 
         String line = userInput.nextLine().trim();
