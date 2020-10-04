@@ -7,7 +7,7 @@ public class ClientConnectionData {
     private BufferedReader input;
     private PrintWriter out;
     private String name;        // like localhost, ip address etc...
-    private String userName;
+    private String username;
 
     public ClientConnectionData(Socket socket, BufferedReader input, PrintWriter out, String name) {
         this.socket = socket;
@@ -48,12 +48,12 @@ public class ClientConnectionData {
         this.name = name;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     

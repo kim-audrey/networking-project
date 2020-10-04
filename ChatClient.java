@@ -31,16 +31,30 @@ public class ChatClient {
         //WHAT WE NEEDTACHANGE FOR SUBMITNAME 
         System.out.print("Chat sessions have started");
         final int usernameIndex = 5;
+        String nameInput;
         String username;
-
+        boolean nameExists = false;
         do{
-            System.out.println("SUBMITNAME: ");
-            username = userInput.nextLine().trim();
-        } while (!username.startsWith("NAME") && !ChatServer.clientList.containsKey(username.substring(usernameIndex)));    // can someone check me doing ChatServer.clientlist?
+            System.out.println("SUBMITNAME: ");        // wait, is the user interface system.out?
+            nameInput = userInput.nextLine().trim();
+            username = nameInput.substring(usernameIndex);
+            
+            // check if name is already in use
+            for (ClientConnectionData client : ChatServer.clientList){
+                System.out.println("existing name: " + client.getName());
+                if (client.getName().equals(username)){
+                    nameExists = true;
+                    break;
+                }
+            }
+        } while (!nameInput.startsWith("NAME") || nameExists);    // can someone check me doing ChatServer.clientlist?
         
 
+        // he go to ClientHandler because 
+            // out = new PrintWriter(socket.getOutputStream(), true); 
         out.println(username); //out.flush();
 
+        // wait what i this for: 
         String line = userInput.nextLine().trim();
         while(!line.toLowerCase().startsWith("/quit")) {
             String msg = String.format("CHAT %s", line); 
