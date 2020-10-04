@@ -1,0 +1,26 @@
+do{
+            System.out.println(nameExists);
+            System.out.println("\nSUBMITNAME: ");        // wait, is the user interface system.out?
+            
+            nameInput = userInput.nextLine().trim();
+            input = nameInput.strip().split("[\\s+]");
+
+            if (input[0].equals("NAME") && input.length > 1) {
+                username = nameInput.substring(usernameIndex);
+                System.out.println(username);
+            } else {
+                continue;
+            }
+
+            System.out.println(ChatServer.clientList.size());
+            
+            // check if name is already in use
+            for (ClientConnectionData client : ChatServer.clientList){
+                System.out.println("existing name: " + client.getName());
+                if (client.getName().equals(username)){
+                    nameExists = true;
+                    break;
+                }
+            }
+
+        } while (nameExists);
