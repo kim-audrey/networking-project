@@ -1,7 +1,7 @@
 
-
+// listening to server and printing them out to the user
 public class ServerListener implements Runnable {
-
+//ChatClients Thread that listens to things coming to the server and printing them out for the user
     @Override
     public void run() {
         try {
@@ -13,6 +13,8 @@ public class ServerListener implements Runnable {
                 if(incoming.startsWith("WELCOME")){}
                 //CHAT
                 if(incoming.startsWith("CHAT")){}
+                //PCHAT
+                if(incoming.startsWith("PCHAT")){}
                 //EXIT
                 if(incoming.startsWith("EXIT")){}
                 //BLOCK

@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.SocketException;
 
-
+// server side listens for commands from client
 class ClientHandler implements Runnable {
     // Maintain data about the client serviced by this thread
     ClientConnectionData client;
