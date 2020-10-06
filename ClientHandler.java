@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.SocketException;
 
-
+// server side listens for commands from client
 class ClientHandler implements Runnable {
     // Maintain data about the client serviced by this thread
     ClientConnectionData client;
@@ -34,6 +34,9 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
+
+            // String incoming = ChatClient.socketIn.readLine();
+            
             BufferedReader in = client.getInput();
             PrintWriter out = client.getOut();
             out.println("Chat sessions have started");
@@ -47,14 +50,17 @@ class ClientHandler implements Runnable {
             boolean usernameExists = false;
 
             do{
-                out.println("SUBMITNAME");
+                System.out.println("CLIENTHANDLER SUBMITNAME");
                 nameInput = in.readLine().trim();
                 input = nameInput.strip().split("[\\s+]");
 
-                if (input[0].equals("NAME") && input.length > 1) {
+                System.out.println("HERES WHAT WE HAVE: " + nameInput);
+
+                System.out.println("LENGTH OF INPUT: " + input.length);
+                if (input.length > 1) {
                     username = input[1];
 
-                    out.println("\t\tchecking for username:");
+                    System.out.println("\t\tchecking for username:");
                     usernameExists = false; 
                     for (ClientConnectionData client : ChatServer.clientList){
                         System.out.println("\t\t\ta name: " + client.getUsername());
@@ -65,7 +71,7 @@ class ClientHandler implements Runnable {
                 else 
                     continue;
                     
-            } while (usernameExists);
+            } while (!input[0].equals("NAME") || usernameExists);
 
 
 

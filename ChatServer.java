@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+// has bunch of client handlers
 public class ChatServer {
     public static final int PORT = 54321;
     public static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
