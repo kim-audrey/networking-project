@@ -30,6 +30,23 @@ class ClientHandler implements Runnable {
         }
         
     }
+    public void broadcast(String msg,ClientConnectionData sender) {
+        try {
+            System.out.println("Broadcasting -- " + msg);
+            synchronized (ChatServer.clientList) {
+                for (ClientConnectionData c : ChatServer.clientList){
+                    if(!c.equals(sender)){
+                    c.getOut().println(msg);
+                    }
+                    // c.getOut().flush();
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("broadcast caught exception: " + ex);
+            ex.printStackTrace();
+        }
+        
+    }
 
     @Override
     public void run() {
@@ -87,7 +104,7 @@ class ClientHandler implements Runnable {
                     String chat = incoming.substring(4).trim();
                     if (chat.length() > 0) {
                         String msg = String.format("CHAT %s %s", client.getUsername(), chat);
-                        broadcast(msg);    
+                        broadcast(msg, client);    
                     }
                 } else if (incoming.startsWith("PCHAT")){       // I think this is where it's supposed to go ;-;
                     String recipientName = incoming.strip().split("\\s+")[1];   // should be the 2nd "word" in incoming
