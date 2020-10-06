@@ -81,6 +81,8 @@ class ClientHandler implements Runnable {
             String incoming = "";
 
             while( (incoming = in.readLine()) != null) {
+                System.out.println("\t\t\t\tClientHandler = " + incoming);
+
                 if (incoming.startsWith("CHAT")) {
                     String chat = incoming.substring(4).trim();
                     if (chat.length() > 0) {
