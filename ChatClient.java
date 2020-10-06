@@ -33,7 +33,7 @@ public class ChatClient {
         t.start();
 
         while(listener.connected==null){
-            System.out.print("");
+            System.out.print(""); // please dear dont remove this it will break - alex
         } //wait for submitname
         // wait what i this for: 
        String response="";
@@ -62,7 +62,6 @@ public class ChatClient {
                     spltLine[0]=spltLine[0].substring(1);
 
                     String msg = String.format("PCHAT %s %s", spltLine[0], spltLine[1]); 
-                    System.out.println(msg);
                     out.println(msg);
                 }
             }
@@ -73,7 +72,6 @@ public class ChatClient {
                 }
                 else{
                     String msg = String.format("BLOCK %s", spltLine[1]);
-                    System.out.println(msg); 
                     out.println(msg);
                 }
             }
