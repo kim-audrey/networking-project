@@ -39,8 +39,8 @@ class ClientHandler implements Runnable {
             
             BufferedReader in = client.getInput();
             PrintWriter out = client.getOut();
-            out.println("Chat sessions have started");
-            out.println(ChatServer.clientList);
+            System.out.println("Chat sessions have started");
+
 
             //get userName, first message from user
             
@@ -50,8 +50,8 @@ class ClientHandler implements Runnable {
             boolean usernameExists = false;
 
             do{
-                System.out.println("CLIENTHANDLER SUBMITNAME");
-                nameInput = in.readLine().trim();
+                out.println("SUBMITNAME");
+                nameInput = ChatServer.in.readLine().trim();
                 input = nameInput.strip().split("[\\s+]");
 
                 System.out.println("HERES WHAT WE HAVE: " + nameInput);

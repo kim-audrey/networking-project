@@ -6,6 +6,10 @@ public class ServerListener implements Runnable {
     public void run() {
         try {
             String incoming = "";
+            String header;
+            String message;
+            String name;
+            String messageWithoutName;
 
             while( (incoming = ChatClient.socketIn.readLine()) != null) {
                 if(incoming.equals("SUBMITNAME")){
@@ -14,21 +18,21 @@ public class ServerListener implements Runnable {
                     continue;
 
                 }
-                String header=incoming.substring(0,incoming.indexOf(" "));
-                String message=incoming.substring(incoming.indexOf(" ")+1);
+                header=incoming.substring(0,incoming.indexOf(" "));
+                message=incoming.substring(incoming.indexOf(" ")+1);
 
                 switch(header){
                     case "WELCOME":
                         System.out.println(message + " has joined");
                         break;
                     case "CHAT":
-                        String name = message.substring(0,message.indexOf(" "));
-                        String messageWithoutName=message.substring(message.indexOf(" ")+1);
+                        name = message.substring(0,message.indexOf(" "));
+                        messageWithoutName=message.substring(message.indexOf(" ")+1);
                         System.out.println(name + ": " + messageWithoutName);
                         break;
                     case "PCHAT":
-                        String name = message.substring(0,message.indexOf(" "));
-                        String messageWithoutName=message.substring(message.indexOf(" ")+1);
+                        name = message.substring(0,message.indexOf(" "));
+                        messageWithoutName=message.substring(message.indexOf(" ")+1);
                         System.out.println(name + " (private): " + messageWithoutName);
                         break;
                     case "EXIT":

@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 public class ChatServer {
     public static final int PORT = 54321;
     public static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
+    static BufferedReader in;
 
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(100);
@@ -30,7 +31,7 @@ public class ChatServer {
                         socket.getInetAddress(), socket.getPort(), socket.getLocalPort());
                     
                     // This code should really be done in the separate thread
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     String name = socket.getInetAddress().getHostName();
 
