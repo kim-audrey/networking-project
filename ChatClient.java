@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 public class ChatClient {
     private static Socket socket;
-    static BufferedReader socketIn;
-    static PrintWriter out;
-    static Scanner userInput;
+    static BufferedReader socketIn;    // takes info from other file (namely, ChatServer.java)
+    static PrintWriter out;         // lets other files access us (namely, ChatServer.java)
+    static Scanner userInput;       // taking from terminal
     
     public static void main(String[] args) throws Exception {
         userInput = new Scanner(System.in);
