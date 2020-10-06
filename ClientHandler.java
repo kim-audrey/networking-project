@@ -54,18 +54,13 @@ class ClientHandler implements Runnable {
                 out.println("SUBMITNAME");
                 nameInput = client.getInput().readLine().trim();
                 input = nameInput.strip().split(" ");
-
-                System.out.println("HERES WHAT WE HAVE: " + nameInput);
-
-                System.out.println("LENGTH OF INPUT: " + input.length);
                 
-                if (input.length > 1) {
+                // input = NAME name (so its making sure we're 2 items)
+                if (input.length == 2) {
                     username = input[1];
 
-                    System.out.println("\t\tchecking for username:");
                     usernameExists = false; 
                     for (ClientConnectionData client : ChatServer.clientList){
-                        System.out.println("\t\t\ta name: " + client.getUsername());
                         //this breaks because the username is initally null
                         if (client.getUsername().equals(username))
                             usernameExists = true;
@@ -74,7 +69,7 @@ class ClientHandler implements Runnable {
                 else 
                     continue;
                     
-            } while (usernameExists);
+            } while (usernameExists || !username.matches("[a-zA-Z0-9]+"));
 
 
 
@@ -86,6 +81,8 @@ class ClientHandler implements Runnable {
             String incoming = "";
 
             while( (incoming = in.readLine()) != null) {
+                System.out.println("\t\t\t\tClientHandler = " + incoming);
+
                 if (incoming.startsWith("CHAT")) {
                     String chat = incoming.substring(4).trim();
                     if (chat.length() > 0) {
