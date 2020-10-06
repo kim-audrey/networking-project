@@ -7,7 +7,7 @@ public class ClientConnectionData {
     private BufferedReader input;
     private PrintWriter out;
     private String name;        // like localhost, ip address etc...
-    private String username;
+    private String username ="";
 
     public ClientConnectionData(Socket socket, BufferedReader input, PrintWriter out, String name) {
         this.socket = socket;

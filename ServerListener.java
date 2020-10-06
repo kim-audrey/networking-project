@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
 
 // listening to server and printing them out to the user
 public class ServerListener implements Runnable {
@@ -10,11 +15,18 @@ public class ServerListener implements Runnable {
             String message;
             String name;
             String messageWithoutName;
+            Scanner input;
+            Boolean named;
+            input= new Scanner(System.in);
+            
 
             while( (incoming = ChatClient.socketIn.readLine()) != null) {
                 if(incoming.equals("SUBMITNAME")){
-                    System.out.println("Enter your username: ");
-                    ChatClient.out.println("NAME " + ChatClient.userInput.nextLine().trim());
+                   named=false;
+                    //if naming is sucessful return true
+                    
+
+                    
                     continue;
 
                 }

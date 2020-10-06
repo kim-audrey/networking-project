@@ -50,13 +50,16 @@ class ClientHandler implements Runnable {
             boolean usernameExists = false;
 
             do{
+    
                 out.println("SUBMITNAME");
-                nameInput = ChatServer.in.readLine().trim();
-                input = nameInput.strip().split("[\\s+]");
+                nameInput = client.getInput().readLine().trim();
+                out.println(nameInput);
+                input = nameInput.strip().split(" ");
 
                 System.out.println("HERES WHAT WE HAVE: " + nameInput);
 
                 System.out.println("LENGTH OF INPUT: " + input.length);
+                
                 if (input.length > 1) {
                     username = input[1];
 
@@ -64,6 +67,7 @@ class ClientHandler implements Runnable {
                     usernameExists = false; 
                     for (ClientConnectionData client : ChatServer.clientList){
                         System.out.println("\t\t\ta name: " + client.getUsername());
+                        //this breaks because the username is initally null
                         if (client.getUsername().equals(username))
                             usernameExists = true;
                     }

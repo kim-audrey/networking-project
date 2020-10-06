@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+
+
 // focused on sending things to the Server 
 
 public class ChatClient {
@@ -18,8 +20,8 @@ public class ChatClient {
         System.out.println("What's the server IP? ");
         String serverip = userInput.nextLine();
         System.out.println("What's the server port? ");
-        int port = userInput.nextInt();
-        userInput.nextLine();
+        int port = Integer.parseInt(userInput.nextLine());
+       
 
         socket = new Socket(serverip, port);
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -32,7 +34,16 @@ public class ChatClient {
 
 
         // wait what i this for: 
-        String line = userInput.nextLine().trim();
+       String response="";
+       System.out.println("Enter your username: ");
+        while((response = userInput.nextLine())!=null){
+            out.println("NAME " + response);
+            //if(named){exit loop} else{System.out.println("Enter your username: ");} 
+
+        }
+
+
+        String line=userInput.nextLine();
         while(!line.toLowerCase().startsWith("/quit")) {
 
             String msg = String.format("CHAT %s", line); 
