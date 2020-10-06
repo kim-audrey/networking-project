@@ -51,11 +51,37 @@ public class ChatClient {
         }
 
 
-        String line=userInput.nextLine();
+        String line=userInput.nextLine().trim();
         while(!line.toLowerCase().startsWith("/quit")) {
+            if(line.startsWith("@")){
+                String[] spltLine=line.split(" ");
+                if(spltLine.length<2){
+                    System.out.println("Invalid pm syntax: @user message");
+                }
+                else{
+                    spltLine[0]=spltLine[0].substring(1);
 
-            String msg = String.format("CHAT %s", line); 
-            out.println(msg);
+                    String msg = String.format("PCHAT %s %s", spltLine[0], spltLine[1]); 
+                    System.out.println(msg);
+                    out.println(msg);
+                }
+            }
+            else if(line.startsWith("/block")){
+                String[] spltLine=line.split(" ");
+                if(spltLine.length<2){
+                    System.out.println("Invalid block syntax: /block user");
+                }
+                else{
+                    String msg = String.format("BLOCK %s", spltLine[1]);
+                    System.out.println(msg); 
+                    out.println(msg);
+                }
+            }
+            else{
+
+                String msg = String.format("CHAT %s", line); 
+                out.println(msg);
+            }
             line = userInput.nextLine().trim();
         }
         out.println("QUIT");
