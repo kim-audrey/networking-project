@@ -53,7 +53,6 @@ class ClientHandler implements Runnable {
     
                 out.println("SUBMITNAME");
                 nameInput = client.getInput().readLine().trim();
-                out.println(nameInput);
                 input = nameInput.strip().split(" ");
 
                 System.out.println("HERES WHAT WE HAVE: " + nameInput);
@@ -75,7 +74,7 @@ class ClientHandler implements Runnable {
                 else 
                     continue;
                     
-            } while (!input[0].equals("NAME") || usernameExists);
+            } while (usernameExists);
 
 
 

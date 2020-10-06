@@ -1,11 +1,6 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
-
 // listening to server and printing them out to the user
 public class ServerListener implements Runnable {
+    Boolean connected;
 //ChatClients Thread that listens to things coming to the server and printing them out for the user
     @Override
     public void run() {
@@ -15,14 +10,11 @@ public class ServerListener implements Runnable {
             String message;
             String name;
             String messageWithoutName;
-            Scanner input;
-            Boolean named;
-            input= new Scanner(System.in);
             
 
             while( (incoming = ChatClient.socketIn.readLine()) != null) {
                 if(incoming.equals("SUBMITNAME")){
-                   named=false;
+                   connected=false;
                     //if naming is sucessful return true
                     
 
@@ -51,7 +43,6 @@ public class ServerListener implements Runnable {
                         System.out.println(message + " has left");
                         break;
                 }
-
                 /*
                 //handle different headers
                 //WELCOME

@@ -32,12 +32,20 @@ public class ChatClient {
         Thread t = new Thread(listener);
         t.start();
 
-
+        while(listener.connected==null){
+            System.out.print("");
+        } //wait for submitname
         // wait what i this for: 
        String response="";
        System.out.println("Enter your username: ");
-        while((response = userInput.nextLine())!=null){
+
+        while(!listener.connected){
+            response = userInput.nextLine();
             out.println("NAME " + response);
+            listener.connected=true;
+            Thread.sleep(1000);
+            if(!listener.connected)
+                System.out.println("Invalid username. Enter a new one: ");
             //if(named){exit loop} else{System.out.println("Enter your username: ");} 
 
         }
