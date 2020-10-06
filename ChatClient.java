@@ -7,10 +7,11 @@ import java.util.Scanner;
 public class ChatClient {
     private static Socket socket;
     static BufferedReader socketIn;
-    private static PrintWriter out;
+    static PrintWriter out;
+    static Scanner userInput;
     
     public static void main(String[] args) throws Exception {
-        Scanner userInput = new Scanner(System.in);
+        userInput = new Scanner(System.in);
         
         System.out.println("What's the server IP? ");
         String serverip = userInput.nextLine();
