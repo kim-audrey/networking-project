@@ -138,7 +138,7 @@ class ClientHandler implements Runnable {
                             }
                         }
                         if(blocked)
-                            recipient.getOut().println("BLOCKED" + recipient.getUsername());
+                            recipient.getOut().println("BLOCKED " + recipient.getUsername());
                         else
                             recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
@@ -148,6 +148,8 @@ class ClientHandler implements Runnable {
                     for(ClientConnectionData c: ChatServer.clientList){
                        if(c.getUsername().equals(offenderUserName)){
                         client.addBlock(c);
+                        client.getOut().println("BLOCKCONF "+ offenderUserName);
+                        c.getOut().println("BLOCKED"+client.getUsername());
                        }
 
                     }
