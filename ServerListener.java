@@ -43,7 +43,7 @@ public class ServerListener implements Runnable {
                         System.out.println(message + " has left");
                         break;
                     case "BLOCKCONF":
-                        System.out.println("You have blocked" + message);
+                        System.out.println("You have blocked " + message);
                         break;
                     case "BLOCKED":
                         System.out.println(message + " has blocked you");
