@@ -98,28 +98,29 @@ class ClientHandler implements Runnable {
             String incoming = "";
 
             while( (incoming = in.readLine()) != null) {
-                System.out.println("\t\t\t\tClientHandler = " + incoming);
-
                 if (incoming.startsWith("CHAT")) {
                     String chat = incoming.substring(4).trim();
                     if (chat.length() > 0) {
                         String msg = String.format("CHAT %s %s", client.getUsername(), chat);
                         broadcast(msg, client);    
                     }
-                } else if (incoming.startsWith("PCHAT")){       // I think this is where it's supposed to go ;-;
+                } 
+                
+                else if (incoming.startsWith("PCHAT")){       // I think this is where it's supposed to go ;-;
                     String recipientName = incoming.strip().split("\\s+")[1];   // should be the 2nd "word" in incoming
                     ClientConnectionData recipient = client;    // as default until I think of something better
 
                     for(ClientConnectionData c : ChatServer.clientList){
-                        if (c.getName().equals(recipientName)){
+                        if (c.getUsername().equals(recipientName)){
                             recipient = c;
                             break;
                         }
                     }
-                    if(recipient.equals(client)) {    
+
+                    if(recipient.equals(client)) {  
                         client.getOut().printf("Sorry... %s does not exist, it was all a dream", recipientName);       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
                     } else {
-                        recipient.getOut().printf("PCHAT %s: %s", client.getName(), incoming.substring("PCHAT ".length() + recipientName.length()));
+                        recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
                 } else if (incoming.startsWith("QUIT")){
                     break;

@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientConnectionData {
     private Socket socket;
@@ -8,12 +9,21 @@ public class ClientConnectionData {
     private PrintWriter out;
     private String name;        // like localhost, ip address etc...
     private String username ="";
+    private ArrayList<ClientConnectionData> blockedList = new ArrayList<>();
 
     public ClientConnectionData(Socket socket, BufferedReader input, PrintWriter out, String name) {
         this.socket = socket;
         this.input = input;
         this.out = out;
         this.name = name;
+    }
+
+    public void addBlock(ClientConnectionData offender){
+        blockedList.add(offender);
+    }
+
+    public ArrayList<ClientConnectionData> getBlockedList(){
+        return blockedList;
     }
 
     public Socket getSocket() {
