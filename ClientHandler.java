@@ -127,7 +127,7 @@ class ClientHandler implements Runnable {
 
                     // recipient default value was client
                     if(recipient.equals(client)) {  
-                        client.getOut().printf("Sorry... %s does not exist, it was all a dream", recipientName);       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
+                        client.getOut().println("PCHAT SERVER Sorry... " + recipientName + " does not exist, it was all a dream");       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
                     } else {
                         // checks if client is blocked by recipient
                         boolean blocked = false;
@@ -137,7 +137,9 @@ class ClientHandler implements Runnable {
                                 break;
                             }
                         }
-                        if(!blocked)
+                        if(blocked)
+                            recipient.getOut().println("BLOCKED" + recipient.getUsername());
+                        else
                             recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
                 } else if (incoming.startsWith("QUIT")){
