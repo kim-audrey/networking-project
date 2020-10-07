@@ -106,10 +106,18 @@ class ClientHandler implements Runnable {
                     }
                 } 
                 
-                else if (incoming.startsWith("PCHAT")){       // I think this is where it's supposed to go ;-;
+                else if (incoming.startsWith("PCHAT")){  
                     String recipientName = incoming.strip().split("\\s+")[1];   // should be the 2nd "word" in incoming
-                    ClientConnectionData recipient = client;    // as default until I think of something better
+                    ClientConnectionData recipient = client;  
 
+                    // if client pms themselves 
+                            // (also makes sure that if recipient = client, recipient doesn't exist)
+                    if(client.getUsername().equals(recipientName)){
+                        recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
+                        continue;
+                    }
+
+                    // setting recipient
                     for(ClientConnectionData c : ChatServer.clientList){
                         if (c.getUsername().equals(recipientName)){
                             recipient = c;
@@ -117,10 +125,20 @@ class ClientHandler implements Runnable {
                         }
                     }
 
+                    // recipient default value was client
                     if(recipient.equals(client)) {  
                         client.getOut().printf("Sorry... %s does not exist, it was all a dream", recipientName);       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
                     } else {
-                        recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
+                        // checks if client is blocked by recipient
+                        boolean blocked = false;
+                        for(ClientConnectionData c : recipient.getBlockedList()){
+                            if (c.getUsername().equals(client.getUsername())){
+                                blocked = true;
+                                break;
+                            }
+                        }
+                        if(!blocked)
+                            recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
                 } else if (incoming.startsWith("QUIT")){
                     break;
