@@ -60,7 +60,7 @@ public class ChatClient {
                 }
                 else{
                     spltLine[0]=spltLine[0].substring(1);
-                    String msg = String.format("PCHAT %s %s", spltLine[0], spltLine[1]); 
+                    String msg = String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1)); 
                     out.println(msg);
                 }
             }

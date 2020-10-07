@@ -35,7 +35,7 @@ class ClientHandler implements Runnable {
             System.out.println("Broadcasting -- " + msg);
             synchronized (ChatServer.clientList) {
                 for (ClientConnectionData c : ChatServer.clientList){
-                    if(!c.equals(sender)){
+                    if(!c.equals(sender)&& !c.getBlockedList().contains(sender)){
                     c.getOut().println(msg);
                     }
                     // c.getOut().flush();
@@ -142,7 +142,20 @@ class ClientHandler implements Runnable {
                         else
                             recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
-                } else if (incoming.startsWith("QUIT")){
+                }
+                else if(incoming.startsWith("BLOCK")){
+                    String offenderUserName = incoming.strip().split("\\s+")[1];
+                    for(ClientConnectionData c: ChatServer.clientList){
+                       if(c.getUsername().equals(offenderUserName)){
+                        client.addBlock(c);
+                       }
+
+                    }
+                    
+                }
+                
+                
+                else if (incoming.startsWith("QUIT")){
                     break;
                 }
             }
