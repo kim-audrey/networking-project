@@ -15,7 +15,7 @@ class ClientHandler implements Runnable {
     
 	// Broadcasts a message to all clients connected to the server.
 	
-    public void broadcast(String msg) {
+    public static void broadcast(String msg) {
         try {
             System.out.println("Broadcasting -- " + msg);
             synchronized (ChatServer.clientList) {
@@ -30,7 +30,7 @@ class ClientHandler implements Runnable {
         }
         
     }
-    public void broadcast(String msg,ClientConnectionData sender) {
+    public static void broadcast(String msg,ClientConnectionData sender) {
         try {
             System.out.println("Broadcasting -- " + msg);
             synchronized (ChatServer.clientList) {
@@ -105,6 +105,11 @@ class ClientHandler implements Runnable {
                         broadcast(msg, client);    
                     }
                 } 
+
+                else if (incoming.startsWith("/whoishere")){
+                    // THIS PROBABLY SHOULDN'T BE "CHAT" BUT SOMETHING SPECIAL
+                    out.println("CHAT SERVER " + ChatServer.clientList_toString());
+                }
                 
                 else if (incoming.startsWith("PCHAT")){  
                     String recipientName = incoming.strip().split("\\s+")[1];   // should be the 2nd "word" in incoming
