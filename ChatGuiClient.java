@@ -50,6 +50,11 @@ import javafx.stage.Stage;
  * That process is a little messy for VSCode; it is easiest to do it via the command line there.
  * However, you should open  Explorer -> Java Projects and add to Referenced Libraries the javafx .jar files 
  * to have the syntax coloring and autocomplete work for JavaFX 
+ * 
+ * Alex's run thingies
+ * set PATH_TO_FX="C:\Program Files\javafx-sdk-11.0.2\lib"
+ * javac --module-path %PATH_TO_FX% --add-modules javafx.controls networking-project/src/networking-project/ChatGuiClient.java
+ * java --module-path %PATH_TO_FX% --add-modules javafx.controls networking-project.src.networking-project.ChatGuiClient
  */
 
 class ServerInfo {
