@@ -1,0 +1,21 @@
+ Alex's run thingies
+
+ set PATH_TO_FX="C:\Program Files\javafx-sdk-11.0.2\lib"
+ cd networking-project/src/networking-project
+ cd src/networking-project
+ set PATH_TO_FX="C:\Program Files\javafx-sdk-11.0.2\lib"
+ javac --module-path %PATH_TO_FX% --add-modules javafx.controls ChatGuiClient.java
+ java --module-path %PATH_TO_FX% --add-modules javafx.controls ChatGuiClient
+ cd ..
+ cd ..
+ cd ..
+ 
+ cd src/networking-project
+ javac ChatServer.java
+ java ChatServer
+ 
+ cd src/networking-project
+ javac ChatClient.java
+ java ChatClient
+
+ IP: 192.168.68.111

@@ -51,10 +51,6 @@ import javafx.stage.Stage;
  * However, you should open  Explorer -> Java Projects and add to Referenced Libraries the javafx .jar files 
  * to have the syntax coloring and autocomplete work for JavaFX 
  * 
- * Alex's run thingies
- * set PATH_TO_FX="C:\Program Files\javafx-sdk-11.0.2\lib"
- * javac --module-path %PATH_TO_FX% --add-modules javafx.controls networking-project/src/networking-project/ChatGuiClient.java
- * java --module-path %PATH_TO_FX% --add-modules javafx.controls networking-project.src.networking-project.ChatGuiClient
  */
 
 class ServerInfo {
@@ -148,8 +144,23 @@ public class ChatGuiClient extends Application {
         String message = textInput.getText().trim();
         if (message.length() == 0)
             return;
+        if(message.startsWith("@")){
+            String[] spltLine=message.split(" ");
+            if(spltLine.length<2){
+                messageArea.appendText("Invalid pm syntax: @user message");
+            }
+            else{
+                spltLine[0]=spltLine[0].substring(1);
+                String msg = String.format("PCHAT %s %s", spltLine[0], message.substring(message.indexOf(" ")+1)); 
+                out.println(msg);
+            }
+        }
+        else{
+
+            String msg = String.format("CHAT %s", message); 
+            out.println(msg);
+        }
         textInput.clear();
-        out.println("CHAT " + message);
     }
 
     private Optional<ServerInfo> getServerIpAndPort() {
@@ -250,7 +261,7 @@ public class ChatGuiClient extends Application {
                 //Ask the gui to show the username dialog and update username
                 //Send to the server
                 Platform.runLater(() -> {
-                    out.println(getName());
+                    out.println("NAME " + getName());
                 });
 
                 //handle all kinds of incoming messages
@@ -286,7 +297,19 @@ public class ChatGuiClient extends Application {
                         Platform.runLater(() -> {
                             messageArea.appendText(user + "has left the chatroom.\n");
                         });
+                    } else if (incoming.startsWith("PCHAT")) {
+                        int split = incoming.indexOf(" ", 6);
+                        String user = incoming.substring(6, split);
+                        String msg = incoming.substring(split + 1);
+
+                        Platform.runLater(() -> {
+                            messageArea.appendText(user + " (private): " + msg + "\n");
+                        });
+
+
                     }
+
+
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
