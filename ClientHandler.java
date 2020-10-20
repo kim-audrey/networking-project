@@ -106,7 +106,7 @@ class ClientHandler implements Runnable {
                     }
                 } 
 
-                else if (incoming.startsWith("/whoishere")){
+                else if (incoming.startsWith("WHOISHERE")){
                     // THIS PROBABLY SHOULDN'T BE "CHAT" BUT SOMETHING SPECIAL
                     out.println("CHAT SERVER " + ChatServer.clientList_toString());
                 }
@@ -148,6 +148,7 @@ class ClientHandler implements Runnable {
                             recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
                     }
                 }
+                
                 else if(incoming.startsWith("BLOCK")){
                     String offenderUserName = incoming.strip().split("\\s+")[1];
                     for(ClientConnectionData c: ChatServer.clientList){
@@ -160,7 +161,6 @@ class ClientHandler implements Runnable {
                     }
                     
                 }
-                
                 
                 else if (incoming.startsWith("QUIT")){
                     break;

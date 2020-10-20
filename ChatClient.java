@@ -53,6 +53,7 @@ public class ChatClient {
 
         String line=userInput.nextLine().trim();
         while(!line.toLowerCase().startsWith("/quit")) {
+
             if(line.startsWith("@")){
                 String[] spltLine=line.split(" ");
                 if(spltLine.length<2){
@@ -64,6 +65,11 @@ public class ChatClient {
                     out.println(msg);
                 }
             }
+
+            else if(line.startsWith("/whoishere")){
+                out.println("WHOISHERE");
+            }
+
             else if(line.startsWith("/block")){
                 String[] spltLine=line.split(" ");
                 if(spltLine.length<2){
@@ -74,6 +80,7 @@ public class ChatClient {
                     out.println(msg);
                 }
             }
+
             else{
 
                 String msg = String.format("CHAT %s", line); 
