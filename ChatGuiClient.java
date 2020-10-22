@@ -158,14 +158,14 @@ public class ChatGuiClient extends Application {
                 else{
                     spltLine[0]=spltLine[0].substring(1);
                     String msg = String.format("PCHAT %s %s", spltLine[0], message.substring(message.indexOf(" ")+1)); 
-                    objectOut.writeObject(msg);
+                    objectOut.writeObject(new Message(msg));
                     objectOut.flush();
                 }
             }
             else{
 
                 String msg = String.format("CHAT %s", message); 
-                objectOut.writeObject(msg);
+                objectOut.writeObject(new Message (msg));
                 objectOut.flush();
             }
             textInput.clear();
