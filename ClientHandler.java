@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.SocketException;
 
 // server side listens for commands from client
@@ -16,12 +14,14 @@ class ClientHandler implements Runnable {
 	// Broadcasts a message to all clients connected to the server.
 	
     public static void broadcast(String msg) {
+
         try {
             System.out.println("Broadcasting -- " + msg);
+            Message message=new Message(msg);
             synchronized (ChatServer.clientList) {
                 for (ClientConnectionData c : ChatServer.clientList){
-                    c.getOut().println(msg);
-                    // c.getOut().flush();
+                    c.getObjectOut().writeObject(message);
+                    c.getObjectOut().flush();
                 }
             }
         } catch (Exception ex) {
@@ -30,15 +30,16 @@ class ClientHandler implements Runnable {
         }
         
     }
-    public static void broadcast(String msg,ClientConnectionData sender) {
+    public static void broadcast(String msg, ClientConnectionData sender) {
         try {
             System.out.println("Broadcasting -- " + msg);
+            Message message=new Message(msg);
             synchronized (ChatServer.clientList) {
                 for (ClientConnectionData c : ChatServer.clientList){
-                    if(!c.equals(sender)&& !c.getBlockedList().contains(sender)){
-                    c.getOut().println(msg);
+                    if(!c.equals(sender)&& !c.getBlockedList().contains(sender)) {
+                        c.getObjectOut().writeObject(message);
+                        c.getObjectOut().flush();
                     }
-                    // c.getOut().flush();
                 }
             }
         } catch (Exception ex) {
@@ -56,6 +57,8 @@ class ClientHandler implements Runnable {
             
             BufferedReader in = client.getInput();
             PrintWriter out = client.getOut();
+            ObjectInputStream objectIn=client.getObjectIn();
+            ObjectOutputStream objectOut=client.getObjectOut();
             System.out.println("Chat sessions have started");
 
 
@@ -70,7 +73,7 @@ class ClientHandler implements Runnable {
     
                 out.println("SUBMITNAME");
                 nameInput = client.getInput().readLine().trim();
-                input = nameInput.strip().split(" ");
+                input = nameInput.trim().split(" ");
                 
                 // input = NAME name (so its making sure we're 2 items)
                 if (input.length == 2) {
@@ -112,7 +115,7 @@ class ClientHandler implements Runnable {
                 }
                 
                 else if (incoming.startsWith("PCHAT")){  
-                    String recipientName = incoming.strip().split("\\s+")[1];   // should be the 2nd "word" in incoming
+                    String recipientName = incoming.trim().split("\\s+")[1];   // should be the 2nd "word" in incoming
                     ClientConnectionData recipient = client;  
 
                     // if client pms themselves 
@@ -150,7 +153,7 @@ class ClientHandler implements Runnable {
                 }
                 
                 else if(incoming.startsWith("BLOCK")){
-                    String offenderUserName = incoming.strip().split("\\s+")[1];
+                    String offenderUserName = incoming.trim().split("\\s+")[1];
                     for(ClientConnectionData c: ChatServer.clientList){
                        if(c.getUsername().equals(offenderUserName)){
                         client.addBlock(c);
@@ -168,7 +171,7 @@ class ClientHandler implements Runnable {
             }
         } catch (Exception ex) {
             if (ex instanceof SocketException) {
-                System.out.println("Caught socket ex for " + 
+                System.out.println("Caught socket ex for " +
                     client.getName());
             } else {
                 System.out.println(ex);

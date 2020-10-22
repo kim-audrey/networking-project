@@ -3,7 +3,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 
 // focused on sending things to the Server 
@@ -13,6 +14,8 @@ public class ChatClient {
     static BufferedReader socketIn;    // takes info from other file (namely, ChatServer.java)
     static PrintWriter out;         // lets other files access us (namely, ChatServer.java)
     static Scanner userInput;       // taking from terminal
+    static ObjectInputStream objectIn;
+    static ObjectOutputStream objectOut;
     
     public static void main(String[] args) throws Exception {
         userInput = new Scanner(System.in);
@@ -26,6 +29,8 @@ public class ChatClient {
         socket = new Socket(serverip, port);
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
+        objectIn = new ObjectInputStream(socket.getInputStream());
+        objectOut = new ObjectOutputStream(socket.getOutputStream());
 
         // start a thread to listen for server messages
         ServerListener listener = new ServerListener();
@@ -61,7 +66,7 @@ public class ChatClient {
                 }
                 else{
                     spltLine[0]=spltLine[0].substring(1);
-                    String msg = String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1)); 
+                    String msg = String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1));
                     out.println(msg);
                 }
             }
@@ -83,7 +88,7 @@ public class ChatClient {
 
             else{
 
-                String msg = String.format("CHAT %s", line); 
+                String msg = String.format("CHAT %s", line);
                 out.println(msg);
             }
             line = userInput.nextLine().trim();
