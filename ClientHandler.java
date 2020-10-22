@@ -64,16 +64,16 @@ class ClientHandler implements Runnable {
 
             //get userName, first message from user
             
-            String nameInput;
+            Message nameInput;
             String username = "";
             String[] input;
             boolean usernameExists = false;
 
             do{
     
-                out.println("SUBMITNAME");
-                nameInput = client.getInput().readLine().trim();
-                input = nameInput.trim().split(" ");
+                objectOut.writeObject(new Message("SUBMITNAME"));
+                nameInput = (Message) client.getObjectIn().readObject();
+                input = nameInput.getMessage().trim().split(" ");
                 
                 // input = NAME name (so its making sure we're 2 items)
                 if (input.length == 2) {
@@ -98,30 +98,32 @@ class ClientHandler implements Runnable {
             broadcast(String.format("WELCOME %s", client.getUsername()));
 
             
-            String incoming = "";
+            Message incoming = new Message("");
 
-            while( (incoming = in.readLine()) != null) {
-                if (incoming.startsWith("CHAT")) {
-                    String chat = incoming.substring(4).trim();
+            while( (incoming = (Message) objectIn.readObject()) != null) {
+                if (incoming.getMessage().startsWith("CHAT")) {
+                    String chat = incoming.getMessage().substring(4).trim();
                     if (chat.length() > 0) {
                         String msg = String.format("CHAT %s %s", client.getUsername(), chat);
                         broadcast(msg, client);    
                     }
                 } 
 
-                else if (incoming.startsWith("WHOISHERE")){
+                else if (incoming.getMessage().startsWith("WHOISHERE")){
                     // THIS PROBABLY SHOULDN'T BE "CHAT" BUT SOMETHING SPECIAL
-                    out.println("CHAT SERVER " + ChatServer.clientList_toString());
+                    objectOut.writeObject("CHAT SERVER " + ChatServer.clientList_toString());
+                    objectOut.flush();
                 }
                 
-                else if (incoming.startsWith("PCHAT")){  
-                    String recipientName = incoming.trim().split("\\s+")[1];   // should be the 2nd "word" in incoming
+                else if (incoming.getMessage().startsWith("PCHAT")){
+                    String recipientName = incoming.getMessage().trim().split("\\s+")[1];   // should be the 2nd "word" in incoming
                     ClientConnectionData recipient = client;  
 
                     // if client pms themselves 
                             // (also makes sure that if recipient = client, recipient doesn't exist)
                     if(client.getUsername().equals(recipientName)){
-                        recipient.getOut().println("PCHAT SERVER You're PMing yourself");
+                        recipient.getObjectOut().writeObject(new Message("PCHAT SERVER You're PMing yourself"));
+                        recipient.getObjectOut().flush();
                         continue;
                     }
 
@@ -135,8 +137,11 @@ class ClientHandler implements Runnable {
 
                     // recipient default value was client
                     if(recipient.equals(client)) {  
-                        client.getOut().println("PCHAT SERVER Sorry... user \"" + recipientName + "\" does not exist, it was all a dream");       // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
-                    } else {
+                        client.getObjectOut().writeObject(new Message("PCHAT SERVER Sorry... user \"" + recipientName + "\" does not exist, it was all a dream"));
+                        client.getObjectOut().flush();
+                        // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
+                    }
+                    else {
                         // checks if client is blocked by recipient
                         boolean blocked = false;
                         for(ClientConnectionData c : recipient.getBlockedList()){
@@ -145,27 +150,32 @@ class ClientHandler implements Runnable {
                                 break;
                             }
                         }
-                        if(blocked)
-                            client.getOut().println("BLOCKED " + recipient.getUsername());
-                        else
-                            recipient.getOut().println("PCHAT " + client.getUsername() + " " + incoming.substring("PCHAT ".length() + recipientName.length()));
+                        if(blocked){
+                            client.getObjectOut().writeObject(new Message("BLOCKED " + recipient.getUsername()));
+                            client.getObjectOut().flush();}
+                        else{
+                            recipient.getObjectOut().writeObject(new Message("PCHAT " + client.getUsername() + " " + incoming.getMessage().substring("PCHAT ".length() + recipientName.length())));
+                            recipient.getObjectOut().flush();
+                        }
                     }
                 }
                 
-                else if(incoming.startsWith("BLOCK")){
-                    String offenderUserName = incoming.trim().split("\\s+")[1];
+                else if(incoming.getMessage().startsWith("BLOCK")){
+                    String offenderUserName = incoming.getMessage().trim().split("\\s+")[1];
                     for(ClientConnectionData c: ChatServer.clientList){
                        if(c.getUsername().equals(offenderUserName)){
                         client.addBlock(c);
-                        client.getOut().println("BLOCKCONF "+ offenderUserName);
-                        c.getOut().println("BLOCKED " + client.getUsername());
+                        client.getObjectOut().writeObject(new Message("BLOCKCONF "+ offenderUserName));
+                        client.getObjectOut().flush();
+                        c.getObjectOut().writeObject(new Message("BLOCKED " + client.getUsername()));
+                        c.getObjectOut().flush();
                        }
 
                     }
                     
                 }
                 
-                else if (incoming.startsWith("QUIT")){
+                else if (incoming.getMessage().startsWith("QUIT")){
                     break;
                 }
             }

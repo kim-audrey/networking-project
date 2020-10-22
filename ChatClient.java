@@ -1,10 +1,6 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 
 // focused on sending things to the Server 
@@ -14,8 +10,8 @@ public class ChatClient {
     static BufferedReader socketIn;    // takes info from other file (namely, ChatServer.java)
     static PrintWriter out;         // lets other files access us (namely, ChatServer.java)
     static Scanner userInput;       // taking from terminal
-    static ObjectInputStream objectIn;
     static ObjectOutputStream objectOut;
+    static ObjectInputStream objectIn;
     
     public static void main(String[] args) throws Exception {
         userInput = new Scanner(System.in);
@@ -29,7 +25,8 @@ public class ChatClient {
         socket = new Socket(serverip, port);
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
-        objectIn = new ObjectInputStream(socket.getInputStream());
+        objectIn=new ObjectInputStream(socket.getInputStream());
+
         objectOut = new ObjectOutputStream(socket.getOutputStream());
 
         // start a thread to listen for server messages
@@ -46,12 +43,12 @@ public class ChatClient {
 
         while(!listener.connected){
             response = userInput.nextLine();
-            out.println("NAME " + response);
+            objectOut.writeObject(new Message("NAME " + response));
+            objectOut.flush();
             listener.connected=true;
             Thread.sleep(1000);
             if(!listener.connected)
                 System.out.println("Invalid username. Enter a new one: ");
-            //if(named){exit loop} else{System.out.println("Enter your username: ");} 
 
         }
 
@@ -66,13 +63,15 @@ public class ChatClient {
                 }
                 else{
                     spltLine[0]=spltLine[0].substring(1);
-                    String msg = String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1));
-                    out.println(msg);
+                    Message msg = new Message(String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1)));
+                    objectOut.writeObject(msg);
+                    objectOut.flush();
                 }
             }
 
             else if(line.startsWith("/whoishere")){
-                out.println("WHOISHERE");
+                objectOut.writeObject(new Message("WHOISHERE"));
+                objectOut.flush();
             }
 
             else if(line.startsWith("/block")){
@@ -81,51 +80,27 @@ public class ChatClient {
                     System.out.println("Invalid block syntax: /block user");
                 }
                 else{
-                    String msg = String.format("BLOCK %s", spltLine[1]);
-                    out.println(msg);
+                    Message msg = new Message(String.format("BLOCK %s", spltLine[1]));
+                    objectOut.writeObject(msg);
+                    objectOut.flush();
                 }
             }
 
             else{
 
-                String msg = String.format("CHAT %s", line);
-                out.println(msg);
+                Message msg = new Message(String.format("CHAT %s", line));
+                objectOut.writeObject(msg);
+                objectOut.flush();
             }
             line = userInput.nextLine().trim();
         }
-        out.println("QUIT");
+        objectOut.writeObject(new Message("QUIT"));
         out.close();
+
+        objectOut.close();
         userInput.close();
         socketIn.close();
         socket.close();
-        
-
-/*
-    static class ServerListener implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                String incoming = "";
-
-                while( (incoming = socketIn.readLine()) != null) {
-                    //handle different headers
-                    //WELCOME
-                    //CHAT
-                    //EXIT
-                    System.out.println(incoming);
-                }
-            } catch (Exception ex) {
-                System.out.println("Exception caught in listener - " + ex);
-            } finally{
-                System.out.println("Client Listener exiting");
-            }
-        }
-    }
-    */
-
-
-
     }
     
 }

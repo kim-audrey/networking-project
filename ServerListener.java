@@ -5,15 +5,16 @@ public class ServerListener implements Runnable {
     @Override
     public void run() {
         try {
-            String incoming = "";
+            Message incoming = new Message("");
             String header;
             String message;
             String name;
             String messageWithoutName;
             
 
-            while( (incoming = ChatClient.socketIn.readLine()) != null) {
-                if(incoming.equals("SUBMITNAME")){
+            while( (incoming = (Message)ChatClient.objectIn.readObject()) != null) {
+                String incomingmsg=incoming.getMessage();
+                if(incomingmsg.equals("SUBMITNAME")){
                    connected=false;
                     //if naming is sucessful return true
                     
@@ -22,8 +23,8 @@ public class ServerListener implements Runnable {
                     continue;
 
                 }
-                header=incoming.substring(0,incoming.indexOf(" "));
-                message=incoming.substring(incoming.indexOf(" ")+1);
+                header=incomingmsg.substring(0,incomingmsg.indexOf(" "));
+                message=incomingmsg.substring(incomingmsg.indexOf(" ")+1);
 
                 switch(header){
                     case "WELCOME":
