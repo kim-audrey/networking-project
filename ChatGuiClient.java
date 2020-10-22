@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -67,7 +69,9 @@ public class ChatGuiClient extends Application {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    
+    private ObjectInputStream objectIn;
+    private ObjectOutputStream objectOut;
+
     private Stage stage;
     private TextArea messageArea;
     private TextField textInput;
@@ -130,9 +134,10 @@ public class ChatGuiClient extends Application {
         
         //Handle GUI closed event
         stage.setOnCloseRequest(e -> {
-            out.println("QUIT");
-            socketListener.appRunning = false;
-            try {
+            try{
+                objectOut.writeObject(new Message("QUIT"));
+                objectOut.flush();
+                socketListener.appRunning = false;
                 socket.close(); 
             } catch (IOException ex) {}
         });
@@ -141,27 +146,32 @@ public class ChatGuiClient extends Application {
     }
 
     private void sendMessage() {
-        String message = textInput.getText().trim();
-        if (message.length() == 0)
-            return;
-        if(message.startsWith("@")){
-            String[] spltLine=message.split(" ");
-            if(spltLine.length<2){
-                messageArea.appendText("Invalid pm syntax: @user message");
+        try{
+            String message = textInput.getText().trim();
+            if (message.length() == 0)
+                return;
+            if(message.startsWith("@")){
+                String[] spltLine=message.split(" ");
+                if(spltLine.length<2){
+                    messageArea.appendText("Invalid pm syntax: @user message");
+                }
+                else{
+                    spltLine[0]=spltLine[0].substring(1);
+                    String msg = String.format("PCHAT %s %s", spltLine[0], message.substring(message.indexOf(" ")+1)); 
+                    objectOut.writeObject(msg);
+                    objectOut.flush();
+                }
             }
             else{
-                spltLine[0]=spltLine[0].substring(1);
-                String msg = String.format("PCHAT %s %s", spltLine[0], message.substring(message.indexOf(" ")+1)); 
-                out.println(msg);
-            }
-        }
-        else{
 
-            String msg = String.format("CHAT %s", message); 
-            out.println(msg);
-        }
-        textInput.clear();
+                String msg = String.format("CHAT %s", message); 
+                objectOut.writeObject(msg);
+                objectOut.flush();
+            }
+            textInput.clear();
+        }catch(IOException e){}
     }
+
 
     private Optional<ServerInfo> getServerIpAndPort() {
         // In a more polished product, we probably would have the ip /port hardcoded
@@ -256,19 +266,29 @@ public class ChatGuiClient extends Application {
                 socket = new Socket(serverInfo.serverAddress, serverInfo.serverPort);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
+                objectIn=new ObjectInputStream(socket.getInputStream());
+                objectOut = new ObjectOutputStream(socket.getOutputStream());
                 
                 appRunning = true;
                 //Ask the gui to show the username dialog and update username
                 //Send to the server
                 Platform.runLater(() -> {
-                    out.println("NAME " + getName());
+                    try{
+                    objectOut.writeObject(new Message("NAME " + getName()));
+                    objectOut.flush();
+//                    out.println("NAME " + getName());
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
                 });
 
                 //handle all kinds of incoming messages
-                String incoming = "";
-                while (appRunning && (incoming = in.readLine()) != null) {
-                    if (incoming.startsWith("WELCOME")) {
-                        String user = incoming.substring(8);
+                String message = "";
+                Message incoming = new Message("");
+                while (appRunning && (incoming = (Message)objectIn.readObject()) != null) {
+                    message=incoming.getMessage();
+                    if (message.startsWith("WELCOME")) {
+                        String user = message.substring(8);
                         //got welcomed? Now you can send messages!
                         if (user.equals(username)) {
                             Platform.runLater(() -> {
@@ -284,23 +304,23 @@ public class ChatGuiClient extends Application {
                             });
                         }
                             
-                    } else if (incoming.startsWith("CHAT")) {
-                        int split = incoming.indexOf(" ", 5);
-                        String user = incoming.substring(5, split);
-                        String msg = incoming.substring(split + 1);
+                    } else if (message.startsWith("CHAT")) {
+                        int split = message.indexOf(" ", 5);
+                        String user = message.substring(5, split);
+                        String msg = message.substring(split + 1);
 
                         Platform.runLater(() -> {
                             messageArea.appendText(user + ": " + msg + "\n");
                         });
-                    } else if (incoming.startsWith("EXIT")) { 
-                        String user = incoming.substring(5);
+                    } else if (message.startsWith("EXIT")) { 
+                        String user = message.substring(5);
                         Platform.runLater(() -> {
                             messageArea.appendText(user + "has left the chatroom.\n");
                         });
-                    } else if (incoming.startsWith("PCHAT")) {
-                        int split = incoming.indexOf(" ", 6);
-                        String user = incoming.substring(6, split);
-                        String msg = incoming.substring(split + 1);
+                    } else if (message.startsWith("PCHAT")) {
+                        int split = message.indexOf(" ", 6);
+                        String user = message.substring(6, split);
+                        String msg = message.substring(split + 1);
 
                         Platform.runLater(() -> {
                             messageArea.appendText(user + " (private): " + msg + "\n");
@@ -316,7 +336,7 @@ public class ChatGuiClient extends Application {
             } catch (Exception e) {
                 if (appRunning)
                     e.printStackTrace();
-            } 
+            }
             finally {
                 Platform.runLater(() -> {
                     stage.close();
