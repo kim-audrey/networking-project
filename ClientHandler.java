@@ -97,6 +97,9 @@ class ClientHandler implements Runnable {
             //notify all that client has joined
             broadcast(String.format("WELCOME %s", client.getUsername()));
 
+            // 10/27 send list of names to new member
+            client.getObjectOut().writeObject(new Message("WHOISHERE " + ChatServer.clientList_toString()));
+
             
             Message incoming = new Message("");
 
@@ -110,8 +113,7 @@ class ClientHandler implements Runnable {
                 } 
 
                 else if (incoming.getMessage().startsWith("WHOISHERE")){
-                    // THIS PROBABLY SHOULDN'T BE "CHAT" BUT SOMETHING SPECIAL
-                    objectOut.writeObject("CHAT SERVER " + ChatServer.clientList_toString());
+                    objectOut.writeObject(new Message("WHOISHERE " + ChatServer.clientList_toString())); 
                     objectOut.flush();
                 }
                 

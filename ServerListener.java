@@ -31,11 +31,15 @@ public class ServerListener implements Runnable {
                         System.out.println(message + " has joined");
                         // added this 10/11 for aj's part of sprint ii
                         ClientHandler.broadcast(ChatServer.clientList_toString());
+
                         break;
                     case "CHAT":
                         name = message.substring(0,message.indexOf(" "));
                         messageWithoutName=message.substring(message.indexOf(" ")+1);
                         System.out.println(name + ": " + messageWithoutName);
+                        break;
+                    case "WHOISHERE":
+                        System.out.println("Current Chatters:\n" + message);
                         break;
                     case "PCHAT":
                         name = message.substring(0,message.indexOf(" "));

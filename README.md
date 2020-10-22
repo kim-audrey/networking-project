@@ -33,7 +33,9 @@ There are four distinct types of messages that a user can receive once they are 
 ##### Commands
 There are four commands that are possible to send in this server. All commands will be sent to the server upon pressing enter.
 1. ```[msg]```<br> Simply typing your message out will automatically sent it out for everyone to see.
-2. ```@username [msg]```<br>This command will send a message privately to the person specified.
+2. ```@username [msg]```<br>This command will send a message privately to the person specified. User may input any number of @tags at a time for a given private message. 
 3. ```/quit```<br>This command will disconnect the user from the server.
 4. ```/block @username```<br>This command will permanently block the user inputted. Upon blocking a user, the selected user will not be able to send private messages to the client and the client will not see the selected user's messages in the server.
+5. ```/whoishere```<br>This command will display a list of all current chatroom participants.
+
 
