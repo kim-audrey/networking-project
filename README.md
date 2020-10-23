@@ -29,6 +29,8 @@ There are four distinct types of messages that a user can receive once they are 
 2. ```[name]: [msg].```<br>The most basic message showing the message and who sent it. These messages are seen by the whole server
 3. ```[name] (private): [msg].```<br>Another message that can be sent to you. This message means only you can see it. Again it also shows the message and sender.
 4. ```[name] has left.```<br>This message is sent each time a client disconnects from the server.
+5. ```Current Chatters:```<br>This message displays a list of all current chatroom participants.
+
 
 ##### Commands
 There are four commands that are possible to send in this server. All commands will be sent to the server upon pressing enter.
