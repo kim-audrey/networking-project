@@ -60,8 +60,9 @@ class ClientHandler implements Runnable {
             
             BufferedReader in = client.getInput();
             PrintWriter out = client.getOut();
-            ObjectInputStream objectIn=client.getObjectIn();
             ObjectOutputStream objectOut=client.getObjectOut();
+            ObjectInputStream objectIn=client.getObjectIn();
+
             System.out.println("Chat sessions have started");
 
 
@@ -174,7 +175,7 @@ class ClientHandler implements Runnable {
                         // checks if client is blocked by recipient
                        
                        
-                    }
+                    
                 }
                 else if(incoming.getMessage().startsWith("BLOCK")){
                     String offenderUserName = incoming.getMessage().trim().split("\\s+")[1];

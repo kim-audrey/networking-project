@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -167,9 +168,9 @@ public class ChatGuiClient extends Application {
                         }
                     }
                     if(valid){
-                        String message=spltLine[spltLine.length-1];
+                        String messagePart=spltLine[spltLine.length-1];
                         String[] recipients= Arrays.copyOfRange(spltLine, 0,spltLine.length); 
-                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", message), recipients);
+                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", messagePart), recipients);
                         objectOut.writeObject(msg);
                         objectOut.flush();
                     }
@@ -336,7 +337,7 @@ public class ChatGuiClient extends Application {
                            String[] recipientList=((PrivateMessage) incoming).recipientList;
                            
                            Platform.runLater(() -> {
-                               for(int i=0; i<recipientList.length<i++;){
+                               for(int i=0; i<recipientList.length;i++){
                                 messageArea.appendText(recipientList[i] + " (private): " + msg + "\n");
                                }
                             
