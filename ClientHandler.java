@@ -138,7 +138,6 @@ class ClientHandler implements Runnable {
                     for (int j=0; j<recipientsNames.length;j++){
                         boolean valid=false;
                         for(int i=0; i<ChatServer.clientList.size();i++){
-                            System.out.println(recipientsNames[j]);
                             if(recipientsNames[j].equals(ChatServer.clientList.get(i).getUsername())){
                                 recipients.add(ChatServer.clientList.get(i));
                                 valid=true;
@@ -165,8 +164,7 @@ class ClientHandler implements Runnable {
                                 client.getObjectOut().writeObject(new Message("BLOCKED " + c.getUsername()));
                                 client.getObjectOut().flush();}
                             else{
-                                System.out.println(incoming.getMessage());
-                                c.getObjectOut().writeObject(new Message("PCHAT " + client.getUsername() + " " + incoming.getMessage().substring("PCHAT ".length())));
+                                c.getObjectOut().writeObject(new Message("PCHAT " + client.getUsername() + " " + incoming.getMessage().substring(incoming.getMessage().indexOf(" ")+1)));
                                 c.getObjectOut().flush();
                             }
 

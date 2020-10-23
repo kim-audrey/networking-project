@@ -154,35 +154,42 @@ public class ChatGuiClient extends Application {
             if(message.startsWith("@")){
                 String[] spltLine=message.split(" ");
                 if(spltLine.length<2){
-                    messageArea.appendText("Invalid pm syntax: @user @user .... message");
+                    System.out.println("Invalid pm syntax: @user @user .... message");
                 }
                 else{
-                    boolean valid=true;
+                    String msgpart="";
+                    int index=0;
+                    boolean recipientsProcessed=false;
                     for(int i=0; i<spltLine.length;i++){
-                        if(spltLine[i].startsWith("@")){
-                            spltLine[0]=spltLine[0].substring(1);
+                        if(spltLine[i].startsWith("@") && !recipientsProcessed){
+                            spltLine[i]=spltLine[i].substring(1);
+                            index++;
                         }
-                        else if (i!=spltLine.length-1){
-                            messageArea.appendText("Invalid pm syntax: @user @user .... message");
-                            valid=false;
+
+                        else {
+                            recipientsProcessed=true;
+                            msgpart=msgpart.concat(spltLine[i]+" ");
+
                         }
+
                     }
-                    if(valid){
-                        String messagePart=spltLine[spltLine.length-1];
-                        String[] recipients= Arrays.copyOfRange(spltLine, 0,spltLine.length); 
-                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", messagePart), recipients);
+                        String[] recipients= Arrays.copyOfRange(spltLine, 0,index);
+                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s", msgpart), recipients);
                         objectOut.writeObject(msg);
                         objectOut.flush();
-                        messageArea.appendText("Private message sent:" + messagePart + "\n");
-                    }
+                        messageArea.appendText("Private message sent: " + msgpart + "\n");
+                   
                 }
+
+                    
+                
             }
             else{
 
                 String msg = String.format("CHAT %s", message); 
                 objectOut.writeObject(new Message (msg));
                 objectOut.flush();
-                messageArea.appendText(username+": " + message + "\n");
+                messageArea.appendText(username+": "+ message + "\n");
             }
             textInput.clear();
         }catch(IOException e){}
@@ -347,17 +354,11 @@ public class ChatGuiClient extends Application {
                         break;
                         }
                         case "PCHAT":{
-                            if(incoming instanceof PrivateMessage){
-                                String msg=((PrivateMessage) incoming).getMessage(); 
-                                String[] recipientList=((PrivateMessage) incoming).recipientList;
-                                
-                                Platform.runLater(() -> {
-                                    for(int i=0; i<recipientList.length;i++){
-                                     messageArea.appendText(recipientList[i] + " (private): " + msg + "\n");
-                                    }
-                                 
-                                });
-                            }
+                            String name = message.substring(0,message.indexOf(" "));
+                            String messageWithoutName=message.substring(message.indexOf(" ")+1);
+                            Platform.runLater(() -> {
+                                messageArea.appendText(name + " (private): " + messageWithoutName + "\n");
+                            });
                             break;
                         }
     
