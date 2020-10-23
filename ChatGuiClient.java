@@ -173,6 +173,7 @@ public class ChatGuiClient extends Application {
                         PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", messagePart), recipients);
                         objectOut.writeObject(msg);
                         objectOut.flush();
+                        messageArea.appendText("Private message sent:" + messagePart + "\n");
                     }
                 }
             }
@@ -181,6 +182,7 @@ public class ChatGuiClient extends Application {
                 String msg = String.format("CHAT %s", message); 
                 objectOut.writeObject(new Message (msg));
                 objectOut.flush();
+                messageArea.appendText(username+": " + message + "\n");
             }
             textInput.clear();
         }catch(IOException e){}
