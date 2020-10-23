@@ -18,8 +18,6 @@ public class ServerListener implements Runnable {
                    connected=false;
                     //if naming is sucessful return true
                     
-
-                    
                     continue;
 
                 }
@@ -28,10 +26,8 @@ public class ServerListener implements Runnable {
 
                 switch(header){
                     case "WELCOME":
-                        System.out.println(message + " has joined");
-                        // added this 10/11 for aj's part of sprint ii
-                        ClientHandler.broadcast(ChatServer.clientList_toString());
-
+                        name = message.substring(0,message.indexOf(" "));
+                        System.out.println(name + " has joined");
                         break;
                     case "CHAT":
                         name = message.substring(0,message.indexOf(" "));
@@ -39,7 +35,11 @@ public class ServerListener implements Runnable {
                         System.out.println(name + ": " + messageWithoutName);
                         break;
                     case "WHOISHERE":
-                        System.out.println("Current Chatters:\n" + message);
+                        String[] currentChatters = message.split(" ");
+                        String chatters = "";
+                        for (String x : currentChatters)
+                            chatters += "\t" + x + "\n";
+                        System.out.println("Current Chatters:\n" + chatters);
                         break;
                     case "PCHAT":
                         name = message.substring(0,message.indexOf(" "));
@@ -47,7 +47,8 @@ public class ServerListener implements Runnable {
                         System.out.println(name + " (private): " + messageWithoutName);
                         break;
                     case "EXIT":
-                        System.out.println(message + " has left");
+                        name = message.substring(0,message.indexOf(" "));
+                        System.out.println(name + " has left");
                         break;
                     case "BLOCKCONF":
                         System.out.println("You have blocked " + message);

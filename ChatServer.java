@@ -59,7 +59,7 @@ public class ChatServer {
     public static String clientList_toString(){
         String allClients = "";
         for(ClientConnectionData c : ChatServer.clientList){
-            allClients += "\t" + c.getUsername() + "\n";
+            allClients += c.getUsername() + " ";
         }
 
         return allClients;

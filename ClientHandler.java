@@ -95,12 +95,10 @@ class ClientHandler implements Runnable {
 
             client.setUsername(username);
             //notify all that client has joined
-            broadcast(String.format("WELCOME %s", client.getUsername()));
+            broadcast(String.format("WELCOME %s %s", client.getUsername(), ChatServer.clientList_toString()));
+            client.getObjectOut().writeObject(new Message("WHOISHERE " + ChatServer.clientList_toString())); 
 
-            // 10/27 send list of names to new member
-            client.getObjectOut().writeObject(new Message("WHOISHERE " + ChatServer.clientList_toString()));
 
-            
             Message incoming = new Message("");
 
             while( (incoming = (Message) objectIn.readObject()) != null) {
@@ -195,7 +193,7 @@ class ClientHandler implements Runnable {
                 ChatServer.clientList.remove(client); 
             }
             System.out.println(client.getName() + " has left.");
-            broadcast(String.format("EXIT %s", client.getUsername()));
+            broadcast(String.format("EXIT %s %s", client.getUsername(), ChatServer.clientList_toString()));
             try {
                 client.getSocket().close();
             } catch (IOException ex) {}
