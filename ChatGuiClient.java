@@ -69,8 +69,8 @@ public class ChatGuiClient extends Application {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private ObjectInputStream objectIn;
     private ObjectOutputStream objectOut;
+    private ObjectInputStream objectIn;
 
     private Stage stage;
     private TextArea messageArea;
@@ -266,8 +266,8 @@ public class ChatGuiClient extends Application {
                 socket = new Socket(serverInfo.serverAddress, serverInfo.serverPort);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
-                objectIn=new ObjectInputStream(socket.getInputStream());
                 objectOut = new ObjectOutputStream(socket.getOutputStream());
+                objectIn=new ObjectInputStream(socket.getInputStream());
                 
                 appRunning = true;
                 //Ask the gui to show the username dialog and update username

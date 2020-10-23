@@ -33,8 +33,8 @@ public class ChatServer {
                     // This code should really be done in the separate thread
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     out = new PrintWriter(socket.getOutputStream(), true);
-                    objectIn = new ObjectInputStream(socket.getInputStream());
                     objectOut = new ObjectOutputStream(socket.getOutputStream());
+                    objectIn = new ObjectInputStream(socket.getInputStream());
                     String name = socket.getInetAddress().getHostName();
 
                     ClientConnectionData client = new ClientConnectionData(socket,objectIn,objectOut, in, out, name);
