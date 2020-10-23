@@ -7,6 +7,7 @@ public class PrivateMessage extends Message implements Serializable{
 
     public PrivateMessage(String message, String[] list){
         super(message);
+        this.message=message;
         this.recipientList = list;
     }
 

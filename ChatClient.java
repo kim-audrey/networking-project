@@ -63,24 +63,26 @@ public class ChatClient {
                     System.out.println("Invalid pm syntax: @user @user .... message");
                 }
                 else{
-                    boolean valid=true;
+                    String msgpart="";
+                    int index=0;
+                    boolean recipientsProcessed=false;
                     for(int i=0; i<spltLine.length;i++){
-                        if(spltLine[i].startsWith("@")){
-                            spltLine[0]=spltLine[0].substring(1);
+                        if(spltLine[i].startsWith("@") && !recipientsProcessed){
+                            spltLine[i]=spltLine[i].substring(1);
+                            index++;
                         }
-                        else if (i!=spltLine.length-1){
-                            System.out.println("Invalid pm syntax: @user @user .... message");
-                            valid=false;
-                        }
-                    }
 
-                    if(valid){
-                        String message=spltLine[spltLine.length-1];
-                        String[] recipients= Arrays.copyOfRange(spltLine, 0,spltLine.length); 
-                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", message), recipients);
+                        else {
+                            recipientsProcessed=true;
+                            msgpart=msgpart.concat(spltLine[i]+" ");
+
+                        }
+
+                    }
+                        String[] recipients= Arrays.copyOfRange(spltLine, 0,index);
+                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s", msgpart), recipients);
                         objectOut.writeObject(msg);
                         objectOut.flush();
-                    }
 
                    
                 }
