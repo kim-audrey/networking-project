@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.SocketException;
+import java.util.*;
 
 // server side listens for commands from client
 class ClientHandler implements Runnable {
@@ -30,6 +31,8 @@ class ClientHandler implements Runnable {
         }
         
     }
+   
+
     public static void broadcast(String msg, ClientConnectionData sender) {
         try {
             System.out.println("Broadcasting -- " + msg);
@@ -116,50 +119,63 @@ class ClientHandler implements Runnable {
                 }
                 
                 else if (incoming.getMessage().startsWith("PCHAT")){
-                    String recipientName = incoming.getMessage().trim().split("\\s+")[1];   // should be the 2nd "word" in incoming
-                    ClientConnectionData recipient = client;  
-
+                    String[] recipientsNames = ((PrivateMessage)incoming).recipientList;  
+                    ArrayList<ClientConnectionData> recipients=new ArrayList<ClientConnectionData>();
+                    
                     // if client pms themselves 
                             // (also makes sure that if recipient = client, recipient doesn't exist)
-                    if(client.getUsername().equals(recipientName)){
-                        recipient.getObjectOut().writeObject(new Message("PCHAT SERVER You're PMing yourself"));
-                        recipient.getObjectOut().flush();
-                        continue;
-                    }
+                        if( Arrays.asList(recipientsNames).contains(client.getUsername())){
+                            client.getObjectOut().writeObject(new Message("PCHAT SERVER You're PMing yourself"));
+                            client.getObjectOut().flush();
+                            continue;
+                        }
 
                     // setting recipient
-                    for(ClientConnectionData c : ChatServer.clientList){
-                        if (c.getUsername().equals(recipientName)){
-                            recipient = c;
-                            break;
-                        }
-                    }
+                    
+                    ArrayList<String> clienListusernames=new ArrayList<String>();
 
-                    // recipient default value was client
-                    if(recipient.equals(client)) {  
-                        client.getObjectOut().writeObject(new Message("PCHAT SERVER Sorry... user \"" + recipientName + "\" does not exist, it was all a dream"));
-                        client.getObjectOut().flush();
-                        // check if getOut() is the correct one... it must be right!!!! What is printwriter ;-
-                    }
-                    else {
-                        // checks if client is blocked by recipient
-                        boolean blocked = false;
-                        for(ClientConnectionData c : recipient.getBlockedList()){
-                            if (c.getUsername().equals(client.getUsername())){
-                                blocked = true;
-                                break;
+                    for (int j=0; j<recipientsNames.length;j++){
+                        boolean valid=false;
+                        for(int i=0; i<ChatServer.clientList.size();i++){
+                            if(recipientsNames[j].equals(ChatServer.clientList.get(i).getUsername())){
+                                recipients.add(ChatServer.clientList.get(i));
+                                valid=true;
                             }
                         }
-                        if(blocked){
-                            client.getObjectOut().writeObject(new Message("BLOCKED " + recipient.getUsername()));
-                            client.getObjectOut().flush();}
-                        else{
-                            recipient.getObjectOut().writeObject(new Message("PCHAT " + client.getUsername() + " " + incoming.getMessage().substring("PCHAT ".length() + recipientName.length())));
-                            recipient.getObjectOut().flush();
+                        if (!valid){
+                            client.getObjectOut().writeObject(new Message("PCHAT SERVER Sorry... user \"" + recipientsNames[j] + "\" does not exist, it was all a dream"));
+                            client.getObjectOut().flush();
+
                         }
+
+                    }
+                    
+                    for(ClientConnectionData c:recipients){
+                            boolean blocked = false;
+                            for(ClientConnectionData cb:c.getBlockedList()){
+                                if (cb.getUsername().equals(client.getUsername())){
+                                    blocked = true;
+                                    break;
+                                }
+
+                            }
+                            if(blocked){
+                                client.getObjectOut().writeObject(new Message("BLOCKED " + c.getUsername()));
+                                client.getObjectOut().flush();}
+                            else{
+                                c.getObjectOut().writeObject(new Message("PCHAT " + client.getUsername() + " " + incoming.getMessage().substring("PCHAT ".length() + c.getUsername().length())));
+                                c.getObjectOut().flush();
+                            }
+
+
+
+                        }
+
+                        // checks if client is blocked by recipient
+                       
+                       
                     }
                 }
-                
                 else if(incoming.getMessage().startsWith("BLOCK")){
                     String offenderUserName = incoming.getMessage().trim().split("\\s+")[1];
                     for(ClientConnectionData c: ChatServer.clientList){

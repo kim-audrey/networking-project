@@ -153,13 +153,26 @@ public class ChatGuiClient extends Application {
             if(message.startsWith("@")){
                 String[] spltLine=message.split(" ");
                 if(spltLine.length<2){
-                    messageArea.appendText("Invalid pm syntax: @user message");
+                    messageArea.appendText("Invalid pm syntax: @user @user .... message");
                 }
                 else{
-                    spltLine[0]=spltLine[0].substring(1);
-                    String msg = String.format("PCHAT %s %s", spltLine[0], message.substring(message.indexOf(" ")+1)); 
-                    objectOut.writeObject(new Message(msg));
-                    objectOut.flush();
+                    boolean valid=true;
+                    for(int i=0; i<spltLine.length;i++){
+                        if(spltLine[i].startsWith("@")){
+                            spltLine[0]=spltLine[0].substring(1);
+                        }
+                        else if (i!=spltLine.length-1){
+                            messageArea.appendText("Invalid pm syntax: @user @user .... message");
+                            valid=false;
+                        }
+                    }
+                    if(valid){
+                        String message=spltLine[spltLine.length-1];
+                        String[] recipients= Arrays.copyOfRange(spltLine, 0,spltLine.length); 
+                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", message), recipients);
+                        objectOut.writeObject(msg);
+                        objectOut.flush();
+                    }
                 }
             }
             else{
@@ -318,15 +331,18 @@ public class ChatGuiClient extends Application {
                             messageArea.appendText(user + "has left the chatroom.\n");
                         });
                     } else if (message.startsWith("PCHAT")) {
-                        int split = message.indexOf(" ", 6);
-                        String user = message.substring(6, split);
-                        String msg = message.substring(split + 1);
-
-                        Platform.runLater(() -> {
-                            messageArea.appendText(user + " (private): " + msg + "\n");
+                       if(incoming instanceof PrivateMessage){
+                           String msg=((PrivateMessage) incoming).getMessage(); 
+                           String[] recipientList=((PrivateMessage) incoming).recipientList;
+                           
+                           Platform.runLater(() -> {
+                               for(int i=0; i<recipientList.length<i++;){
+                                messageArea.appendText(recipientList[i] + " (private): " + msg + "\n");
+                               }
+                            
                         });
 
-
+                       }
                     }
 
 

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -59,14 +60,31 @@ public class ChatClient {
             if(line.startsWith("@")){
                 String[] spltLine=line.split(" ");
                 if(spltLine.length<2){
-                    System.out.println("Invalid pm syntax: @user message");
+                    System.out.println("Invalid pm syntax: @user @user .... message");
                 }
                 else{
-                    spltLine[0]=spltLine[0].substring(1);
-                    Message msg = new Message(String.format("PCHAT %s %s", spltLine[0], line.substring(line.indexOf(" ")+1)));
-                    objectOut.writeObject(msg);
-                    objectOut.flush();
+                    boolean valid=true;
+                    for(int i=0; i<spltLine.length;i++){
+                        if(spltLine[i].startsWith("@")){
+                            spltLine[0]=spltLine[0].substring(1);
+                        }
+                        else if (i!=spltLine.length-1){
+                            System.out.println("Invalid pm syntax: @user @user .... message");
+                            valid=false;
+                        }
+                    }
+
+                    if(valid){
+                        String message=spltLine[spltLine.length-1];
+                        String[] recipients= Arrays.copyOfRange(spltLine, 0,spltLine.length); 
+                        PrivateMessage msg = new PrivateMessage(String.format("PCHAT %s ", message), recipients);
+                        objectOut.writeObject(msg);
+                        objectOut.flush();
+                    }
+
+                   
                 }
+
             }
 
             else if(line.startsWith("/whoishere")){
