@@ -297,12 +297,72 @@ public class ChatGuiClient extends Application {
                 });
 
                 //handle all kinds of incoming messages
-                String message = "";
+                String message;
+                String header;
+                String givenString;
+
                 Message incoming = new Message("");
                 while (appRunning && (incoming = (Message)objectIn.readObject()) != null) {
-                    message=incoming.getMessage();
+                    givenString=incoming.getMessage();
+                    if(!givenString.contains(" "))
+                        continue;
+                    header=givenString.substring(0,givenString.indexOf(" "));
+                    message=givenString.substring(givenString.indexOf(" ")+1);
+                    switch(header){
+                        case "WELCOME":{
+                            String user = message.substring(0,message.indexOf(" "));
+                            
+                            //got welcomed? Now you can send messages!
+                            if (user.equals(username)) {
+                                Platform.runLater(() -> {
+                                    stage.setTitle("Chatter - " + username);
+                                    textInput.setEditable(true);
+                                    sendButton.setDisable(false);
+                                    messageArea.appendText("Welcome to the chatroom, " + username + "!\n");
+                                });
+                            }
+                            else {
+                                Platform.runLater(() -> {
+                                    messageArea.appendText(user + " has joined the chatroom.\n");
+                                });
+                            }
+                            break;
+                        }
+                        case "CHAT": {
+                            String user = message.substring(0,message.indexOf(" "));
+                            String msg= message.substring(message.indexOf(" ")+1);
+
+                            Platform.runLater(() -> {
+                                messageArea.appendText(user + ": " + msg + "\n");
+                            });
+                            break;
+                        }
+                        case "EXIT":{
+                            String user = message.substring(0,message.indexOf(" "));
+                        Platform.runLater(() -> {
+                            messageArea.appendText(user + " has left the chatroom.\n");
+                        });
+                        break;
+                        }
+                        case "PCHAT":{
+                            if(incoming instanceof PrivateMessage){
+                                String msg=((PrivateMessage) incoming).getMessage(); 
+                                String[] recipientList=((PrivateMessage) incoming).recipientList;
+                                
+                                Platform.runLater(() -> {
+                                    for(int i=0; i<recipientList.length;i++){
+                                     messageArea.appendText(recipientList[i] + " (private): " + msg + "\n");
+                                    }
+                                 
+                                });
+                            }
+                            break;
+                        }
+    
+                    
+/*
                     if (message.startsWith("WELCOME")) {
-                        String user = message.substring(8);
+                        name = message.substring(message.indexOf(" ")+1).message.substring(0,message.indexOf(" "));
                         //got welcomed? Now you can send messages!
                         if (user.equals(username)) {
                             Platform.runLater(() -> {
@@ -345,8 +405,8 @@ public class ChatGuiClient extends Application {
 
                        }
                     }
-
-
+*/
+                    }
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();

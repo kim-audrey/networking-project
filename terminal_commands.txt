@@ -17,5 +17,3 @@
  cd src/networking-project
  javac ChatClient.java
  java ChatClient
-
- IP: 192.168.68.111
