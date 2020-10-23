@@ -25,9 +25,9 @@ public class ChatClient {
         socket = new Socket(serverip, port);
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
-        objectIn=new ObjectInputStream(socket.getInputStream());
 
         objectOut = new ObjectOutputStream(socket.getOutputStream());
+        objectIn=new ObjectInputStream(socket.getInputStream());
 
         // start a thread to listen for server messages
         ServerListener listener = new ServerListener();
