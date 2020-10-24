@@ -38,8 +38,8 @@ There are four commands that are possible to send in this server. All commands w
 2. ```@username [msg]```<br>This command will send a message privately to the person specified. User may input any number of @tags at a time for a given private message. 
 3. ```/quit```<br>This command will disconnect the user from the server.
 4. ```/block @username```<br>This command will permanently block the user inputted. Upon blocking a user, the selected user will not be able to send private messages to the client and the client will not see the selected user's messages in the server.<br>
-&nbsp;&nbsp;> On the UI, instead of typing this command, users can open the participants panel and press the block button
+&nbsp;&nbsp;> `On the UI:` instead of typing this command, users can open the participants panel and press the block button
 5. ```/whoishere```<br>This command will display a list of all current chatroom participants.<br>
-&nbsp;&nbsp;> On the UI, this will create a new window with a list of the participants
+&nbsp;&nbsp;> `On the UI:` this will create a new window with a list of the participants
 
 
