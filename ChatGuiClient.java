@@ -6,9 +6,12 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.awt.Toolkit;
+import java.awt.Dimension;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -19,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -26,7 +30,9 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 /**
  * For Java 8, javafx is installed with the JRE. You can run this program normally.
@@ -72,11 +78,15 @@ public class ChatGuiClient extends Application {
     private PrintWriter out;
     private ObjectOutputStream objectOut;
     private ObjectInputStream objectIn;
+    private ArrayList<String> blocked;
 
     private Stage stage;
     private TextArea messageArea;
     private TextField textInput;
     private Button sendButton;
+
+    private Stage pStage;
+    private VBox pVBox;
 
     private ServerInfo serverInfo;
     //volatile keyword makes individual reads/writes of the variable atomic
@@ -104,6 +114,28 @@ public class ChatGuiClient extends Application {
                 return;
             }
         }
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        blocked=new ArrayList<String>();
+
+        pStage=new Stage();
+        BorderPane pBorderPane=new BorderPane();
+        
+        pBorderPane.setTop(new Label("Participants"));
+
+        pVBox=new VBox();
+
+        ScrollPane pScrollPane=new ScrollPane();
+        pScrollPane.setPannable(true);
+        pScrollPane.setContent(pVBox);
+        pBorderPane.setCenter(pScrollPane);
+
+        Scene pScene = new Scene(pBorderPane, 400, 500);
+        pStage.setTitle("Participants");
+        pStage.setScene(pScene);
+        pStage.setX(width/4);
+        pStage.show();
+
 
         this.stage = primaryStage;
         BorderPane borderPane = new BorderPane();
@@ -129,6 +161,7 @@ public class ChatGuiClient extends Application {
         Scene scene = new Scene(borderPane, 400, 500);
         stage.setTitle("Chat Client");
         stage.setScene(scene);
+        stage.setX(width/2);
         stage.show();
 
         ServerListener socketListener = new ServerListener();
@@ -142,6 +175,15 @@ public class ChatGuiClient extends Application {
                 socket.close(); 
             } catch (IOException ex) {}
         });
+        pStage.setOnCloseRequest(e -> {
+            try{
+                objectOut.writeObject(new Message("QUIT"));
+                objectOut.flush();
+                socketListener.appRunning = false;
+                socket.close(); 
+            } catch (IOException ex) {}
+        });
+        
 
         new Thread(socketListener).start();
     }
@@ -279,6 +321,51 @@ public class ChatGuiClient extends Application {
         return username;
     }
 
+    private void showUsers(String[] users){
+        pVBox.getChildren().clear();
+        pVBox.getChildren().add(new Label("You"));
+        for (String user:users){
+            if(username.equals(user)) {
+                continue;
+            }
+            if(blocked.contains(user)){
+                Label userLabel=new Label(user+" \u274C");
+                Button blockButton = new Button("Blocked");
+                blockButton.setDisable(true);
+
+                Pane spacer=new Pane();
+                HBox userHBox=new HBox();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                userHBox.getChildren().addAll(userLabel, spacer, blockButton);
+                pVBox.getChildren().add(userHBox);
+            }
+            else{
+                Label userLabel=new Label(user);
+                Button blockButton = new Button("Block");
+                blockButton.setOnAction(e -> {
+                    blockButton.setDisable(true);
+                    userLabel.setText(userLabel.getText() + " \u274C");
+                    blockButton.setText("Blocked");
+                    blocked.add(user);
+                    try {
+                        objectOut.writeObject(new Message("BLOCK " + user));
+                        objectOut.flush();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                });
+
+
+                Pane spacer=new Pane();
+                HBox userHBox=new HBox();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                spacer.setMinWidth(50);
+                userHBox.getChildren().addAll(userLabel, spacer, blockButton);
+                pVBox.getChildren().add(userHBox);
+            }
+        }
+    }
+
     class ServerListener implements Runnable {
 
         volatile boolean appRunning = false;
@@ -320,6 +407,7 @@ public class ChatGuiClient extends Application {
                     switch(header){
                         case "WELCOME":{
                             String user = message.substring(0,message.indexOf(" "));
+                            String userList =message.substring(message.indexOf(" ")+1);
                             
                             //got welcomed? Now you can send messages!
                             if (user.equals(username)) {
@@ -335,6 +423,9 @@ public class ChatGuiClient extends Application {
                                     messageArea.appendText(user + " has joined the chatroom.\n");
                                 });
                             }
+                            Platform.runLater(() -> {
+                                showUsers(userList.split(" "));
+                            });
                             break;
                         }
                         case "CHAT": {
@@ -348,9 +439,12 @@ public class ChatGuiClient extends Application {
                         }
                         case "EXIT":{
                             String user = message.substring(0,message.indexOf(" "));
+                            String userList= message.substring(message.indexOf(" ")+1);
                         Platform.runLater(() -> {
                             messageArea.appendText(user + " has left the chatroom.\n");
+                            showUsers(userList.split(" "));
                         });
+
                         break;
                         }
                         case "PCHAT":{
@@ -361,54 +455,13 @@ public class ChatGuiClient extends Application {
                             });
                             break;
                         }
-    
-                    
-/*
-                    if (message.startsWith("WELCOME")) {
-                        name = message.substring(message.indexOf(" ")+1).message.substring(0,message.indexOf(" "));
-                        //got welcomed? Now you can send messages!
-                        if (user.equals(username)) {
+                        case "BLOCKED":{
+                            String msg=message;
                             Platform.runLater(() -> {
-                                stage.setTitle("Chatter - " + username);
-                                textInput.setEditable(true);
-                                sendButton.setDisable(false);
-                                messageArea.appendText("Welcome to the chatroom, " + username + "!\n");
+                                messageArea.appendText(msg + " has blocked you\n");
                             });
+                            break;
                         }
-                        else {
-                            Platform.runLater(() -> {
-                                messageArea.appendText(user + " has joined the chatroom.\n");
-                            });
-                        }
-                            
-                    } else if (message.startsWith("CHAT")) {
-                        int split = message.indexOf(" ", 5);
-                        String user = message.substring(5, split);
-                        String msg = message.substring(split + 1);
-
-                        Platform.runLater(() -> {
-                            messageArea.appendText(user + ": " + msg + "\n");
-                        });
-                    } else if (message.startsWith("EXIT")) { 
-                        String user = message.substring(5);
-                        Platform.runLater(() -> {
-                            messageArea.appendText(user + "has left the chatroom.\n");
-                        });
-                    } else if (message.startsWith("PCHAT")) {
-                       if(incoming instanceof PrivateMessage){
-                           String msg=((PrivateMessage) incoming).getMessage(); 
-                           String[] recipientList=((PrivateMessage) incoming).recipientList;
-                           
-                           Platform.runLater(() -> {
-                               for(int i=0; i<recipientList.length;i++){
-                                messageArea.appendText(recipientList[i] + " (private): " + msg + "\n");
-                               }
-                            
-                        });
-
-                       }
-                    }
-*/
                     }
                 }
             } catch (UnknownHostException e) {
@@ -420,6 +473,7 @@ public class ChatGuiClient extends Application {
             finally {
                 Platform.runLater(() -> {
                     stage.close();
+                    pStage.close();
                 });
                 try {
                     if (socket != null)
