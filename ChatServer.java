@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 // has bunch of client handlers
 public class ChatServer {
-    public static final int PORT = 54321;
+    public static final int PORT = 59007;
     public static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
     static BufferedReader in;
     static PrintWriter out;
